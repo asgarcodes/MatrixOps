@@ -1,0 +1,35 @@
+# task_list.md
+
+- [x] Project Initialization <!-- id: 1 -->
+    - [x] Initialize Next.js app with TypeScript and Tailwind CSS <!-- id: 2 -->
+    - [x] Install dependencies: `@supabase/supabase-js`, `leaflet`, `react-leaflet`, `qrcode.react`, `@types/leaflet` <!-- id: 3 -->
+    - [x] Setup Environment Variables (.env.local) <!-- id: 4 -->
+- [x] Firebase Setup <!-- id: 5 -->
+    - [x] Create `lib/firebase.ts` utility <!-- id: 6 -->
+    - [x] Integrate Firestore for Events, RSVPs, and Profiles <!-- id: 7 -->
+    - [x] Implement Auth Context/Provider for Firebase <!-- id: 12 -->
+    - [x] Seed Mock Data (Events) via UI helper <!-- id: 9 -->
+- [x] Authentication Module (Firebase) <!-- id: 10 -->
+    - [x] Create Login Page (`/login`) with Firebase Auth <!-- id: 11 -->
+    - [x] Create Auth Context/Provider for Firebase <!-- id: 12 -->
+    - [x] Create Navbar with User Status <!-- id: 13 -->
+- [x] Discovery Feature <!-- id: 14 -->
+    - [x] Create `MapComponent` (Leaflet) <!-- id: 15 -->
+    - [x] Implement Geolocation fetching <!-- id: 16 -->
+    - [x] Fetch and display events on Map <!-- id: 17 -->
+- [x] RSVP & Ticket Feature <!-- id: 18 -->
+    - [x] Create Event Details View/Modal <!-- id: 19 -->
+    - [x] Implement RSVP Action <!-- id: 20 -->
+    - [x] Create Ticket View with QR Code <!-- id: 21 -->
+- [x] Live Tracking Feature <!-- id: 22 -->
+    - [x] Implement `useLocationTracker` hook <!-- id: 23 -->
+    - [x] Integrate hook into main layout or authenticated wrapper <!-- id: 24 -->
+- [x] Organizer Scanner Feature <!-- id: 25 -->
+    - [x] Create Scanner Page (`/scan`) <!-- id: 26 -->
+    - [x] Implement QR Scanning Logic <!-- id: 27 -->
+    - [x] Implement Check-in Verification Logic <!-- id: 28 -->
+- [x] Verification <!-- id: 29 -->
+    - [x] Verify Login <!-- id: 30 -->
+    - [x] Verify Map and Events <!-- id: 31 -->
+    - [x] Verify RSVP flow <!-- id: 32 -->
+    - [x] Verify Scanner flow <!-- id: 33 -->
