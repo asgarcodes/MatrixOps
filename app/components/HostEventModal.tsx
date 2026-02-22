@@ -6,8 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Calendar, MapPin, Clock, Plus, Loader2, Sparkles, CheckCircle2, ChevronRight } from 'lucide-react'
 import { useAudio } from '@/hooks/useAudio'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/context/AuthContext'
 
 export default function HostEventModal({ onClose, userLocation }: any) {
+    const { user } = useAuth()
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const { playSound } = useAudio()
@@ -21,12 +23,19 @@ export default function HostEventModal({ onClose, userLocation }: any) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+
+        if (!user) {
+            alert("You must be logged in to host an event.")
+            return
+        }
+
         setLoading(true)
         playSound('click')
 
         try {
             await addDoc(collection(db, "events"), {
                 ...formData,
+                user_id: user.uid,
                 lat: userLocation?.lat || 40.7128,
                 lng: userLocation?.lng || -74.0060,
                 created_at: serverTimestamp()

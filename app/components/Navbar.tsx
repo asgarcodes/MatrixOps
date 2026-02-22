@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Scan, LogOut, User, Map as MapIcon, Loader2, Sparkles, LayoutDashboard, Search, Navigation, Globe } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 export default function Navbar() {
     const { user } = useAuth()
@@ -118,7 +119,10 @@ export default function Navbar() {
                         <Link href="/scan" className={cn("text-xs font-bold uppercase tracking-widest transition-colors", pathname === '/scan' ? "text-accent" : "text-muted hover:text-foreground")}>Check-in hub</Link>
                     </nav>
 
+
+
                     <div className="flex items-center gap-4">
+                        <ThemeToggle />
                         {user ? (
                             <div className="flex items-center gap-4">
                                 <Link

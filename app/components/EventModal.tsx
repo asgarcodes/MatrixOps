@@ -2,12 +2,12 @@
 import { QRCodeSVG } from 'qrcode.react'
 import { useState, useEffect } from 'react'
 import { db } from '@/lib/firebase'
-import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore'
+import { collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot, orderBy, limit } from 'firebase/firestore'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     X, Calendar, MapPin, Clock, Ticket, CheckCircle2,
     Loader2, Sparkles, ShieldCheck, DollarSign, Activity,
-    ChevronRight, Zap, Target, Share2, Copy, Check
+    ChevronRight, Zap, Target, Share2, Copy, Check, Radio, Bell
 } from 'lucide-react'
 import { useAudio } from '@/hooks/useAudio'
 import PaymentModal from './PaymentModal'
@@ -19,6 +19,8 @@ export default function EventModal({ event, onClose, userId }: any) {
     const [showPayment, setShowPayment] = useState(false)
     const [qrValue, setQrValue] = useState('')
     const [copied, setCopied] = useState(false)
+    const [broadcasts, setBroadcasts] = useState<any[]>([])
+    const [newBroadcastPulse, setNewBroadcastPulse] = useState(false)
     const { playSound } = useAudio()
 
     useEffect(() => {
@@ -26,6 +28,40 @@ export default function EventModal({ event, onClose, userId }: any) {
             checkRsvp()
         }
     }, [userId, event])
+
+    useEffect(() => {
+        if (!event?.id) return
+
+        const q = query(
+            collection(db, "broadcasts"),
+            where("event_id", "==", event.id)
+        )
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const allBroadcasts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[]
+
+            // Detect if a new broadcast was added (not just initial load)
+            const hasNewDoc = snapshot.docChanges().some(change => change.type === "added")
+            const isInitialLoad = snapshot.metadata.fromCache || snapshot.docs.length === snapshot.docChanges().length
+
+            if (hasNewDoc && !isInitialLoad) {
+                playSound('alert')
+                setNewBroadcastPulse(true)
+                setTimeout(() => setNewBroadcastPulse(false), 3000)
+            }
+
+            // Client-side sort to avoid requiring a composite index
+            allBroadcasts.sort((a, b) => {
+                const timeA = b.created_at?.seconds || 0
+                const timeB = a.created_at?.seconds || 0
+                return timeA - timeB
+            })
+
+            setBroadcasts(allBroadcasts.slice(0, 3))
+        })
+
+        return () => unsubscribe()
+    }, [event?.id])
 
     const checkRsvp = async () => {
         try {
@@ -73,6 +109,7 @@ export default function EventModal({ event, onClose, userId }: any) {
             const docRef = await addDoc(collection(db, "rsvps"), {
                 user_id: userId,
                 event_id: event.id,
+                organizer_id: event.user_id, // Link to the event creator for host dashboard
                 checked_in_at: null,
                 created_at: serverTimestamp()
             });
@@ -80,6 +117,7 @@ export default function EventModal({ event, onClose, userId }: any) {
                 id: docRef.id,
                 user_id: userId,
                 event_id: event.id,
+                organizer_id: event.user_id,
                 checked_in_at: null
             });
             playSound('success')
@@ -159,6 +197,51 @@ export default function EventModal({ event, onClose, userId }: any) {
                     <p className="text-lg text-muted font-medium leading-relaxed">
                         {event.description}
                     </p>
+
+                    {/* Real-time Broadcasts Section */}
+                    {broadcasts.length > 0 && (
+                        <div className={cn(
+                            "space-y-4 p-1 rounded-[2rem] transition-all duration-1000",
+                            newBroadcastPulse ? "bg-red-500/10 shadow-[0_0_40px_-10px_rgba(239,68,68,0.3)] ring-1 ring-red-500/20" : ""
+                        )}>
+                            <div className="flex items-center justify-between px-2">
+                                <div className="flex items-center gap-2 text-[10px] font-bold text-red-500 uppercase tracking-widest">
+                                    <Radio className="w-3.5 h-3.5 animate-pulse" />
+                                    <span>Live Protocol Updates</span>
+                                </div>
+                                <AnimatePresence>
+                                    {newBroadcastPulse && (
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.5, y: 10 }}
+                                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.5 }}
+                                            className="bg-red-600 text-white text-[8px] font-black px-2 py-0.5 rounded-md animate-bounce"
+                                        >
+                                            NEW SIGNAL
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                            <div className="space-y-3">
+                                {broadcasts.map((b) => (
+                                    <motion.div
+                                        key={b.id}
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        className="p-5 bg-card border border-red-500/10 rounded-2xl flex gap-4 shadow-sm"
+                                    >
+                                        <Bell className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-semibold text-foreground leading-snug">{b.message}</p>
+                                            <p className="text-[10px] text-muted-foreground font-medium">
+                                                {b.created_at?.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="p-6 rounded-2xl bg-background border border-border flex items-center gap-4 transition-all">

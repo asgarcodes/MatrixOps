@@ -8,11 +8,11 @@ const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 export const seedFirestoreData = async (lat?: number, lng?: number) => {
     try {
         const eventsCol = collection(db, 'events');
-        const snapshot = await getDocs(eventsCol);
 
-        // 1. Clear existing events
-        const deletePromises = snapshot.docs.map(document => deleteDoc(doc(db, 'events', document.id)));
-        await Promise.all(deletePromises);
+        // 1. Safety Guard: Prevent accidental wipes
+        // Only allow clearing data if explicitly requested via a "clear" parameter or in dev mode
+        // For this professional version, we skip auto-deletion to avoid data loss.
+        console.log("Starting incremental seed...");
 
         // 2. Define category-specific mock events
         const targetLat = lat || 40.7128;

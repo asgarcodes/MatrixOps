@@ -9,6 +9,8 @@ import {
 import { useAudio } from '@/hooks/useAudio'
 import { cn } from '@/lib/utils'
 
+import { createPaymentIntent } from '@/lib/payments'
+
 interface PaymentModalProps {
     event: any
     amount: number
@@ -16,21 +18,33 @@ interface PaymentModalProps {
     onClose: () => void
 }
 
-type Step = 'contact' | 'method' | 'processing' | 'success'
+type Step = 'contact' | 'intent' | 'method' | 'processing' | 'success'
 
 export default function PaymentModal({ event, amount, onSuccess, onClose }: PaymentModalProps) {
     const [step, setStep] = useState<Step>('contact')
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null)
+    const [intent, setIntent] = useState<any>(null)
     const { playSound } = useAudio()
     const [contactInfo, setContactInfo] = useState({ email: '', phone: '' })
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (!contactInfo.email || !contactInfo.phone) {
             alert('Please enter your contact details')
             return
         }
         playSound('click')
-        setStep('method')
+        setStep('intent')
+
+        // Initialize Real Intent
+        try {
+            const newIntent = await createPaymentIntent(amount)
+            setIntent(newIntent)
+            setStep('method')
+        } catch (error) {
+            console.error("Payment Init Failed", error)
+            alert("Payment Gateway unreachable. Please check your connection.")
+            setStep('contact')
+        }
     }
 
     const selectMethod = (method: string) => {
@@ -44,7 +58,7 @@ export default function PaymentModal({ event, amount, onSuccess, onClose }: Paym
             const timer = setTimeout(() => {
                 setStep('success')
                 playSound('success')
-            }, 2500)
+            }, 3500) // Increased for "Realism"
             return () => clearTimeout(timer)
         }
     }, [step])
@@ -53,7 +67,7 @@ export default function PaymentModal({ event, amount, onSuccess, onClose }: Paym
         if (step === 'success') {
             const timer = setTimeout(() => {
                 onSuccess()
-            }, 1500)
+            }, 2000)
             return () => clearTimeout(timer)
         }
     }, [step])
@@ -143,6 +157,21 @@ export default function PaymentModal({ event, amount, onSuccess, onClose }: Paym
                                 >
                                     Proceed to payment <ChevronRight className="w-4 h-4" />
                                 </button>
+                            </motion.div>
+                        )}
+
+                        {step === 'intent' && (
+                            <motion.div
+                                key="intent"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="py-12 flex flex-col items-center justify-center text-center space-y-6"
+                            >
+                                <Loader2 className="w-12 h-12 text-accent animate-spin" />
+                                <div className="space-y-2">
+                                    <h4 className="font-bold text-lg uppercase tracking-wider">Securing Connection</h4>
+                                    <p className="text-[10px] text-muted font-bold uppercase tracking-widest animate-pulse">Initializing encrypted payment node...</p>
+                                </div>
                             </motion.div>
                         )}
 

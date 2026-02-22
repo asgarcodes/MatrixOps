@@ -1,56 +1,112 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
-  --primary: #000000;
-  --primary-foreground: #ffffff;
-  --card: #f9f9f9;
-  --card-foreground: #0a0a0a;
-  --border: #e5e5e5;
-  --muted: #737373;
-  --accent: #2563eb;
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 221.2 83.2% 53.3%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 221.2 83.2% 53.3%;
+  --radius: 0.5rem;
 }
 
-[data-theme='dark'] {
-  --background: #000000;
-  --foreground: #ffffff;
-  --primary: #ffffff;
-  --primary-foreground: #000000;
-  --card: #0a0a0a;
-  --card-foreground: #ffffff;
-  --border: #1a1a1a;
-  --muted: #a3a3a3;
-  --accent: #3b82f6;
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 221.2 83.2% 53.3%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 221.2 83.2% 53.3%;
 }
-
-/*
-  In Tailwind v4, theme variables are often defined in @theme.
-  But standard CSS vars work too.
-*/
 
 @theme {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-border: var(--border);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0
+    }
+
+    to {
+      height: var(--radix-accordion-content-height)
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height)
+    }
+
+    to {
+      height: 0
+    }
+  }
 }
 
+/* Base styles */
 body {
-  color: var(--foreground);
-  background: var(--background);
+  @apply bg-background text-foreground;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  overflow-x: hidden;
-  position: relative;
-  -webkit-font-smoothing: antialiased;
+  transition: color 300ms, background-color 300ms;
 }
 
+/* Background pattern */
 body::before {
   content: "";
   position: fixed;
@@ -60,13 +116,10 @@ body::before {
   background-size: 100% 2px, 3px 100%;
   pointer-events: none;
   z-index: 100;
-  opacity: 0.3;
+  opacity: 0.09;
 }
 
-@utility accenture-gradient {
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-}
-
+/* Utilities */
 @utility glass {
   background: rgba(10, 10, 10, 0.4);
   backdrop-filter: blur(40px);
@@ -79,22 +132,26 @@ body::before {
 }
 
 ::-webkit-scrollbar-track {
-  background: #050505;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(59, 130, 246, 0.2);
-  border-radius: 12px;
+  @apply bg-border rounded-full hover:bg-muted-foreground/50;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(59, 130, 246, 0.5);
-}
-
-/* Mapbox/Leaflet overrides */
+/* Maps */
 .leaflet-container {
   width: 100%;
   height: 100%;
   z-index: 0;
-  background: #050505 !important;
+  background: hsl(var(--background)) !important;
+}
+
+/* 
+  Fix visibility for text-muted by mapping it to muted-foreground.
+  This aligns the existing codebase usage (where text-muted was used for text)
+  with the shadcn system (where muted is a background color).
+*/
+.text-muted {
+  color: hsl(var(--muted-foreground)) !important;
 }

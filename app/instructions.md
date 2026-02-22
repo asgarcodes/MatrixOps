@@ -9,22 +9,20 @@ The project is initialized in the `app` directory.
     cd app
     ```
 
-2.  **Install Dependencies** (if not already done):
+2.  **Install Dependencies**:
     ```bash
     npm install
-    # Ensure all packages are installed:
-    npm install @supabase/supabase-js leaflet react-leaflet qrcode.react html5-qrcode @types/leaflet lucide-react clsx tailwind-merge --legacy-peer-deps
     ```
 
 3.  **Environment Variables**:
     - Open `.env.local`
-    - Update `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` with your Supabase Project credentials.
+    - Ensure your Firebase configuration variables are set (API Key, Project ID, etc.).
 
-## 2. Database Setup (Supabase)
+## 2. Database Setup (Firebase Firestore)
 
-1.  Go to your Supabase Dashboard > SQL Editor.
-2.  Copy the content of `supabase_schema.sql` (located in project root `d:/levi/app/supabase_schema.sql`).
-3.  Run the SQL script to create Tables, RLS Policies, and Functions.
+1.  The project uses **Firebase Firestore**.
+2.  Data structures for `events`, `rsvps`, and `profiles` are managed through the application logic.
+3.  Ensure Firestore is initialized in your Firebase Console and has appropriate Security Rules.
 
 ## 3. Running the App
 
@@ -44,12 +42,13 @@ To test without moving physically:
 - **Mock QR Scan**:
   - Go to `/scan` page.
   - Open the "Debug Actions" dropdown.
-  - Enter a valid RSVP UUID (you can find one in your properties or database `rsvps` table).
+  - Enter a valid RSVP document ID from your Firestore `rsvps` collection.
   - Click "Simulate Scan".
 
 ## 5. Deployment
 
 Deploy to Vercel or similar:
 - Connect your repository.
-- Add the Environment Variables.
-- No other config needed (Next.js default).
+- Add your Firebase Environment Variables to the deployment settings.
+- Ensure the production environment can access your Firestore instance.
+
