@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { collection, query, where, onSnapshot, deleteDoc, doc, limit } from 'firebase/firestore'

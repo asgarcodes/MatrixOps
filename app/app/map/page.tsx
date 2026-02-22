@@ -1,5 +1,6 @@
 'use client'
-import dynamic from 'next/dynamic'
+export const dynamic = 'force-dynamic'
+import nextDynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import { db } from '@/lib/firebase'
@@ -9,7 +10,7 @@ import { useAuth } from '@/context/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RefreshCw, Map as MapIcon, Globe } from 'lucide-react'
 
-const EventMap = dynamic(() => import('@/components/EventMap'), {
+const EventMap = nextDynamic(() => import('@/components/EventMap'), {
     ssr: false,
     loading: () => (
         <div className="w-full h-full bg-[#0a0a0a] rounded-3xl flex items-center justify-center border border-white/5">
