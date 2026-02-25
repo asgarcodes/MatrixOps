@@ -20,15 +20,28 @@ export default function LoginPage() {
     const [isSuccess, setIsSuccess] = useState(false)
     const router = useRouter()
 
+    const showSuccess = () => {
+        setIsSuccess(true)
+        setLoading(false)
+        setTimeout(() => {
+            router.push('/')
+        }, 1500)
+    }
+
     const handleEmailAuth = async (e: React.FormEvent) => {
         e.preventDefault()
+        const _auth = auth
+        if (!_auth) {
+            alert("Authentication service not initialized.")
+            return
+        }
         setLoading(true)
 
         try {
             if (isSignUp) {
-                await createUserWithEmailAndPassword(auth, email, password)
+                await createUserWithEmailAndPassword(_auth, email, password)
             } else {
-                await signInWithEmailAndPassword(auth, email, password)
+                await signInWithEmailAndPassword(_auth, email, password)
             }
             showSuccess()
         } catch (error: any) {
@@ -38,23 +51,20 @@ export default function LoginPage() {
     }
 
     const handleGoogleLogin = async () => {
+        const _auth = auth
+        if (!_auth) {
+            alert("Authentication service not initialized.")
+            return
+        }
         const provider = new GoogleAuthProvider()
         try {
             setLoading(true)
-            await signInWithPopup(auth, provider)
+            await signInWithPopup(_auth, provider)
             showSuccess()
         } catch (error: any) {
             alert(error.message)
             setLoading(false)
         }
-    }
-
-    const showSuccess = () => {
-        setIsSuccess(true)
-        setLoading(false)
-        setTimeout(() => {
-            router.push('/')
-        }, 1500)
     }
 
     return (

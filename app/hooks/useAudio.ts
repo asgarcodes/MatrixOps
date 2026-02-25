@@ -1,7 +1,9 @@
-'use client'
+import { useCallback } from 'react'
 
 export function useAudio() {
-    const playSound = (type: 'click' | 'hover' | 'success' | 'alert') => {
+    const playSound = useCallback((type: 'click' | 'hover' | 'success' | 'alert') => {
+        if (typeof window === 'undefined') return
+
         const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
         const oscillator = audioContext.createOscillator()
         const gainNode = audioContext.createGain()
@@ -38,7 +40,7 @@ export function useAudio() {
 
         oscillator.start()
         oscillator.stop(audioContext.currentTime + 0.2)
-    }
+    }, [])
 
     return { playSound }
 }

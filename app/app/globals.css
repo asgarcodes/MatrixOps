@@ -29,25 +29,36 @@
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 0 0% 98%;
-  --primary-foreground: 240 5.9% 10%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
+  /* #0f0f14 - deep navy charcoal */
+  --background: 240 16% 7%;
+  --foreground: 0 0% 96%;
+  /* #15151e - elevated card surface */
+  --card: 240 14% 10%;
+  --card-foreground: 0 0% 96%;
+  --popover: 240 14% 10%;
+  --popover-foreground: 0 0% 96%;
+  --primary: 0 0% 96%;
+  --primary-foreground: 240 16% 7%;
+  /* #1c1c28 */
+  --secondary: 240 12% 13%;
+  --secondary-foreground: 0 0% 96%;
+  --muted: 240 12% 13%;
+  --muted-foreground: 240 6% 55%;
   --accent: 221.2 83.2% 53.3%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
+  /* #1e1e2a - visible but subtle */
+  --border: 240 12% 14%;
+  --input: 240 12% 14%;
   --ring: 221.2 83.2% 53.3%;
+
+  /* Dashboard elevation layers */
+  --surface-0: 240 16% 7%;
+  --surface-1: 240 14% 10%;
+  --surface-2: 240 12% 13%;
+  --surface-3: 240 10% 16%;
+  --border-subtle: 240 10% 19%;
 }
 
 @theme {
@@ -126,6 +137,28 @@ body::before {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* Dashboard glass card utility */
+@utility glass-card {
+  background: hsla(var(--card), 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid hsl(var(--border));
+}
+
+/* Dashboard glass card elevated */
+@utility glass-card-elevated {
+  background: hsla(var(--card), 0.8);
+  backdrop-filter: blur(24px);
+  border: 1px solid hsla(var(--border), 0.7);
+  box-shadow: 0 0 0 1px hsla(var(--border), 0.1),
+    0 4px 16px -2px rgba(0, 0, 0, 0.3),
+    0 12px 36px -8px rgba(0, 0, 0, 0.15);
+}
+
+/* Noise texture overlay for premium feel */
+@utility noise {
+  position: relative;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -154,4 +187,50 @@ body::before {
 */
 .text-muted {
   color: hsl(var(--muted-foreground)) !important;
+}
+
+/* ---- Dashboard-specific polish ---- */
+
+/* Smooth table row hover with left accent */
+.dashboard-table-row {
+  position: relative;
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.dashboard-table-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 2px;
+  height: 60%;
+  border-radius: 0 2px 2px 0;
+  background: hsl(var(--accent));
+  transition: transform 200ms ease;
+}
+
+.dashboard-table-row:hover::before {
+  transform: translateY(-50%) scaleY(1);
+}
+
+.dashboard-table-row:hover {
+  background: hsla(var(--accent), 0.04);
+}
+
+/* Sidebar active accent bar */
+.sidebar-item-active {
+  position: relative;
+}
+
+.sidebar-item-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: 0 3px 3px 0;
+  background: hsl(var(--accent));
 }

@@ -9,11 +9,16 @@ async function seed() {
     console.log("🚀 Initializing Matrix Synchronization...");
 
     try {
-        const eventsCol = collection(db, 'events');
+        const _db = db
+        if (!_db) {
+            console.error("❌ Critical: Database not initialized. Check your environment variables.");
+            process.exit(1);
+        }
+        const eventsCol = collection(_db, 'events');
         const snapshot = await getDocs(eventsCol);
 
         console.log(`🗑️ Wiping ${snapshot.size} legacy nodes...`);
-        const deletePromises = snapshot.docs.map(document => deleteDoc(doc(db, 'events', document.id)));
+        const deletePromises = snapshot.docs.map(document => deleteDoc(doc(_db, 'events', document.id)));
         await Promise.all(deletePromises);
 
         const MOCK_EVENTS = [

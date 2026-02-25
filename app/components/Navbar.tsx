@@ -19,9 +19,11 @@ export default function Navbar() {
     const isDashboard = pathname.startsWith('/dashboard')
 
     const handleSignOut = async () => {
+        const _auth = auth
+        if (!_auth) return
         setIsSigningOut(true)
         try {
-            await signOut(auth)
+            await signOut(_auth)
             // Add a deliberate delay for the Accenture animation effect
             await new Promise(resolve => setTimeout(resolve, 2000))
             setIsSigningOut(false)

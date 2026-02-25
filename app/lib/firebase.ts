@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,14 +11,23 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-// Only initialize if we have an API key or if an app already exists
-const app = getApps().length === 0
-    ? (firebaseConfig.apiKey ? initializeApp(firebaseConfig) : null)
-    : getApps()[0];
+// Validate config
+const isConfigValid = !!firebaseConfig.apiKey && !!firebaseConfig.projectId;
 
-// Export services as possibly null to avoid crashes, but cast for type safety
-// in places where they are expected to be present (like client-side).
-const auth = (app ? getAuth(app) : {} as Auth);
-const db = (app ? getFirestore(app) : {} as Firestore);
+if (!isConfigValid && typeof window !== 'undefined') {
+    console.warn("Firebase configuration is missing. Ensure NEXT_PUBLIC_FIREBASE_ environment variables are set.");
+}
+
+// Only initialize if we have a valid config and no app exists
+let app: FirebaseApp | null = null;
+
+if (isConfigValid) {
+    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+}
+
+// Export services safely. If app is null, these will be null.
+// The app must check for these before use.
+const auth = app ? getAuth(app) : null;
+const db = app ? getFirestore(app) : null;
 
 export { auth, db };

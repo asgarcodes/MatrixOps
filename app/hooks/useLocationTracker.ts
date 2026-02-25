@@ -7,10 +7,12 @@ export function useLocationTracker(userId: string | undefined) {
         if (!userId) return
 
         const updateLocation = async (pos: GeolocationPosition) => {
+            const _db = db
+            if (!_db) return
             const { latitude, longitude } = pos.coords
 
             try {
-                await setDoc(doc(db, 'profiles', userId), {
+                await setDoc(doc(_db, 'profiles', userId), {
                     live_location: {
                         lat: latitude,
                         lng: longitude

@@ -47,7 +47,9 @@ export default function HomePage() {
     }
 
     const fetchData = async () => {
-      const q = query(collection(db, "events"), orderBy("created_at", "desc"));
+      const _db = db
+      if (!_db) return
+      const q = query(collection(_db, "events"), orderBy("created_at", "desc"));
       const snapshot = await getDocs(q);
       let data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setEvents(data);

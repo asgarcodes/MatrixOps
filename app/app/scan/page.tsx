@@ -31,6 +31,12 @@ export default function ScanPage() {
 
         const [rsvpId] = qrData.split('|')
 
+        const _db = db
+        if (!_db) {
+            setScanResult({ status: 'error', message: 'Database Connection Lost' })
+            return
+        }
+
         try {
             if (rsvpId.startsWith('MOCK-')) {
                 const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -43,7 +49,7 @@ export default function ScanPage() {
                 return
             }
 
-            const rsvpRef = doc(db, "rsvps", rsvpId)
+            const rsvpRef = doc(_db, "rsvps", rsvpId)
             const rsvpSnap = await getDoc(rsvpRef)
 
             if (!rsvpSnap.exists()) {
@@ -62,7 +68,7 @@ export default function ScanPage() {
                 return
             }
 
-            const eventRef = doc(db, "events", rsvpData.event_id)
+            const eventRef = doc(_db, "events", rsvpData.event_id)
             const eventSnap = await getDoc(eventRef)
             const eventTitle = eventSnap.exists() ? eventSnap.data().title : 'Registered Event'
 

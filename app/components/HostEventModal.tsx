@@ -24,8 +24,9 @@ export default function HostEventModal({ onClose, userLocation }: any) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        if (!user) {
-            alert("You must be logged in to host an event.")
+        const _db = db
+        if (!user || !_db) {
+            alert("Database connection or user session not found.")
             return
         }
 
@@ -33,7 +34,7 @@ export default function HostEventModal({ onClose, userLocation }: any) {
         playSound('click')
 
         try {
-            await addDoc(collection(db, "events"), {
+            await addDoc(collection(_db, "events"), {
                 ...formData,
                 user_id: user.uid,
                 lat: userLocation?.lat || 40.7128,

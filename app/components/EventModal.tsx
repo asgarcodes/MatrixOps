@@ -30,10 +30,11 @@ export default function EventModal({ event, onClose, userId }: any) {
     }, [userId, event])
 
     useEffect(() => {
-        if (!event?.id) return
+        const _db = db
+        if (!_db) return
 
         const q = query(
-            collection(db, "broadcasts"),
+            collection(_db, "broadcasts"),
             where("event_id", "==", event.id)
         )
 
@@ -64,9 +65,11 @@ export default function EventModal({ event, onClose, userId }: any) {
     }, [event?.id])
 
     const checkRsvp = async () => {
+        const _db = db
+        if (!_db) return
         try {
             const q = query(
-                collection(db, "rsvps"),
+                collection(_db, "rsvps"),
                 where("user_id", "==", userId),
                 where("event_id", "==", event.id)
             );
@@ -104,9 +107,14 @@ export default function EventModal({ event, onClose, userId }: any) {
     }
 
     const completeBooking = async () => {
+        const _db = db
+        if (!_db) {
+            alert("Database connection not established.")
+            return
+        }
         setLoading(true)
         try {
-            const docRef = await addDoc(collection(db, "rsvps"), {
+            const docRef = await addDoc(collection(_db, "rsvps"), {
                 user_id: userId,
                 event_id: event.id,
                 organizer_id: event.user_id, // Link to the event creator for host dashboard

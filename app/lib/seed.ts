@@ -7,7 +7,11 @@ const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
 export const seedFirestoreData = async (lat?: number, lng?: number) => {
     try {
-        const eventsCol = collection(db, 'events');
+        const _db = db;
+        if (!_db) {
+            throw new Error("Database not initialized. Check your configuration.");
+        }
+        const eventsCol = collection(_db, 'events');
 
         // 1. Safety Guard: Prevent accidental wipes
         // Only allow clearing data if explicitly requested via a "clear" parameter or in dev mode

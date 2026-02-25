@@ -16,13 +16,14 @@ export default function BroadcastModal({ event, onClose }: any) {
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (!message.trim() || !user) return
+        const _db = db
+        if (!message.trim() || !user || !_db) return
 
         setLoading(true)
         playSound('click')
 
         try {
-            await addDoc(collection(db, "broadcasts"), {
+            await addDoc(collection(_db, "broadcasts"), {
                 event_id: event.id,
                 organizer_id: user.uid,
                 message: message.trim(),

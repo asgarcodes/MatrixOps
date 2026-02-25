@@ -30,8 +30,10 @@ export default function MapPage() {
 
     useEffect(() => {
         const fetchEvents = async () => {
+            const _db = db
+            if (!_db) return
             try {
-                const querySnapshot = await getDocs(collection(db, "events"));
+                const querySnapshot = await getDocs(collection(_db, "events"));
                 const eventsData = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
